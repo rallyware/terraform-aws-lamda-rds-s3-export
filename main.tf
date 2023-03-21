@@ -1,42 +1,48 @@
 locals {
   enabled = module.this.enabled
+
+  lambda_src = "${path.module}/lambda"
 }
 
-resource "random_id" "build_id" {
+resource "random_id" "build" {
   count = local.enabled ? 1 : 0
 
   byte_length = 8
   keepers = {
-    "hash" = filesha256("${path.module}/lambda/main.py")
+    hash = filesha256("${local.lambda_src}/main.py")
   }
 }
 
 data "archive_file" "build" {
   count = local.enabled ? 1 : 0
 
-  source_dir  = "${path.module}/lambda"
-  output_path = "/tmp/${random_id.build_id[0].hex}.zip"
+  source_dir  = local.lambda_src
+  output_path = "/tmp/${random_id.build[0].hex}.zip"
   type        = "zip"
 }
 
 module "lambda" {
-  source = "git@github.com:rallyware/terraform-aws-lambda-function.git"
+  count = local.enabled ? 1 : 0
 
-  filename = join("", data.archive_file.build.*.output_path)
+  source  = "rallyware/lambda-function/aws"
+  version = "0.1.0"
 
   handler       = "main.lambda_handler"
-  runtime       = "python3.9"
-  architectures = ["arm64"]
-  timeout       = 5
+  filename      = data.archive_file.build[0].output_path
+  description   = var.lambda_description
+  runtime       = var.lambda_runtime
+  architectures = var.lambda_architectures
+  memory_size   = var.lambda_memory
+  timeout       = var.lambda_timeout
 
   custom_iam_policy_arns = [
     var.lambda_policy_arn,
   ]
 
-  cloudwatch_logs_retention_in_days = 30
+  cloudwatch_logs_retention_in_days = var.lambda_log_retention
   cloudwatch_event_rules = [
     {
-      name = "rds-snapshot-created"
+      name = "rds-automated-snapshot-created"
       event_pattern = jsonencode({
         detail-type = ["RDS DB Snapshot Event"],
         detail = {
