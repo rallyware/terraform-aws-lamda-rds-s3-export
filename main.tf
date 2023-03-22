@@ -1,6 +1,5 @@
 locals {
-  enabled = module.this.enabled
-
+  enabled    = module.this.enabled
   lambda_src = "${path.module}/lambda"
 }
 
@@ -22,13 +21,11 @@ data "archive_file" "build" {
 }
 
 module "lambda" {
-  count = local.enabled ? 1 : 0
-
   source  = "rallyware/lambda-function/aws"
   version = "0.1.0"
 
   handler       = "main.lambda_handler"
-  filename      = data.archive_file.build[0].output_path
+  filename      = one(data.archive_file.build.*.output_path)
   description   = var.lambda_description
   runtime       = var.lambda_runtime
   architectures = var.lambda_architectures
