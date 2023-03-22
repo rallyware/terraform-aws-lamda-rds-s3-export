@@ -25,7 +25,7 @@ module "lambda" {
   version = "0.1.0"
 
   handler       = "main.lambda_handler"
-  filename      = one(data.archive_file.build.*.output_path)
+  filename      = one(data.archive_file.build[*].output_path)
   description   = var.lambda_description
   runtime       = var.lambda_runtime
   architectures = var.lambda_architectures

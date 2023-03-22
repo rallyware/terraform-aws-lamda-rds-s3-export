@@ -4,6 +4,6 @@ output "s3_export_path" {
 }
 
 output "lambda_arn" {
-  value       = local.enabled ? module.lambda[0].arn : null
+  value       = module.lambda.arn
   description = "The AWS Lambda function ARN"
 }
