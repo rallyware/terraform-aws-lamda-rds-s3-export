@@ -16,7 +16,7 @@ output:
   file: README.md
   mode: replace
   template: |-
-    # terraform-module-template
+    # terraform-aws-lambda-rds-s3-export
 
     <!-- BEGIN_TF_DOCS -->
     {{ .Content }}
