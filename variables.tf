@@ -55,7 +55,7 @@ variable "principals" {
 
 variable "names" {
   type        = string
-  description = "Bucket name and IAM name"
+  description = "Bucket and IAM name"
 }
 
 variable "lifecycle_configuration_rules" {
@@ -64,9 +64,6 @@ variable "lifecycle_configuration_rules" {
     id      = string
 
     abort_incomplete_multipart_upload_days = number
-
-    # `filter_and` is the `and` configuration block inside the `filter` configuration.
-    # This is the only place you should specify a prefix.
     filter_and = any
     expiration = any
     transition = list(any)

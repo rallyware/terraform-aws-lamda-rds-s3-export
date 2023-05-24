@@ -7,6 +7,7 @@ output "lambda_arn" {
   value       = module.lambda.arn
   description = "The AWS Lambda function ARN"
 }
+
 output "key_arn" {
   value       = module.kms_key.key_arn
   description = "Key ARN"
@@ -34,12 +35,7 @@ output "role_id" {
 
 output "role_arn" {
   value       = module.role.arn
-  description = "The Amazon Resource Name (ARN) specifying the role"
-}
-
-output "role_policy" {
-  value       = module.role.policy
-  description = "The Amazon Resource Name (ARN) specifying the role"
+  description = "Role ARN"
 }
 
 output "key_alias_name" {
@@ -50,11 +46,6 @@ output "key_alias_name" {
 output "bucket_domain_name" {
   value       = module.bucket.bucket_domain_name
   description = "FQDN of bucket"
-}
-
-output "bucket_id" {
-  value       = module.bucket.bucket_id
-  description = "Bucket Name (aka ID)"
 }
 
 output "bucket_arn" {
