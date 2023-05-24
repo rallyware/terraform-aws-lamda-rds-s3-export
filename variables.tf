@@ -64,7 +64,7 @@ variable "lifecycle_configuration_rules" {
     id      = string
 
     abort_incomplete_multipart_upload_days = number
- 
+
     filter_and = any
     expiration = any
     transition = list(any)
