@@ -98,7 +98,9 @@ module "role" {
   use_fullname = true
 
   policy_documents = [
-  join("", data.aws_iam_policy_document.resource_full_access.*.json), join("", data.aws_iam_policy_document.base.*.json)]
+    join("", data.aws_iam_policy_document.resource_full_access[*].json),
+    join("", data.aws_iam_policy_document.base[*].json)
+  ]
 
   policy_document_count = 2
   policy_description    = "IAM policy"
