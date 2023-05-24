@@ -139,7 +139,7 @@ module "lambda" {
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.2 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.4.6 |
 | <a name="requirement_archive"></a> [archive](#requirement\_archive) | >= 2 |
 | <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | >= 3 |
@@ -172,7 +172,7 @@ module "lambda" {
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_lambda_policy_arn"></a> [lambda\_policy\_arn](#input\_lambda\_policy\_arn) | The ARN of custom IAM policy for lambda function that starts snapshot export task | `string` | n/a | yes |
-| <a name="input_names"></a> [names](#input\_names) | Bucket name and IAM name | `string` | n/a | yes |
+| <a name="input_names"></a> [names](#input\_names) | Bucket and IAM name | `string` | n/a | yes |
 | <a name="input_additional_tag_map"></a> [additional\_tag\_map](#input\_additional\_tag\_map) | Additional key-value pairs to add to each map in `tags_as_list_of_maps`. Not added to `tags` or `id`.<br>This is for some rare cases where resources want additional configuration of tags<br>and therefore take a list of maps with tag key, value, and additional configuration. | `map(string)` | `{}` | no |
 | <a name="input_allowed_bucket_actions"></a> [allowed\_bucket\_actions](#input\_allowed\_bucket\_actions) | List of actions the user is permitted to perform on the S3 bucket | `list(string)` | <pre>[<br>  "s3:PutObject",<br>  "s3:PutObjectAcl",<br>  "s3:GetObject",<br>  "s3:DeleteObject",<br>  "s3:ListBucket",<br>  "s3:ListBucketMultipartUploads",<br>  "s3:GetBucketLocation",<br>  "s3:AbortMultipartUpload"<br>]</pre> | no |
 | <a name="input_attributes"></a> [attributes](#input\_attributes) | ID element. Additional attributes (e.g. `workers` or `cluster`) to add to `id`,<br>in the order they appear in the list. New attributes are appended to the<br>end of the list. The elements of the list are joined by the `delimiter`<br>and treated as a single ID element. | `list(string)` | `[]` | no |
@@ -192,7 +192,7 @@ module "lambda" {
 | <a name="input_lambda_memory"></a> [lambda\_memory](#input\_lambda\_memory) | Amount of memory in MB the Lambda Function can use at runtime. | `number` | `128` | no |
 | <a name="input_lambda_runtime"></a> [lambda\_runtime](#input\_lambda\_runtime) | The runtime environment for the Lambda function you are uploading. | `string` | `"python3.9"` | no |
 | <a name="input_lambda_timeout"></a> [lambda\_timeout](#input\_lambda\_timeout) | The amount of time the Lambda Function has to run in seconds. | `number` | `5` | no |
-| <a name="input_lifecycle_configuration_rules"></a> [lifecycle\_configuration\_rules](#input\_lifecycle\_configuration\_rules) | A list of lifecycle V2 rules | <pre>list(object({<br>    enabled = bool<br>    id      = string<br><br>    abort_incomplete_multipart_upload_days = number<br><br>    # `filter_and` is the `and` configuration block inside the `filter` configuration.<br>    # This is the only place you should specify a prefix.<br>    filter_and = any<br>    expiration = any<br>    transition = list(any)<br><br>    noncurrent_version_expiration = any<br>    noncurrent_version_transition = list(any)<br>  }))</pre> | `[]` | no |
+| <a name="input_lifecycle_configuration_rules"></a> [lifecycle\_configuration\_rules](#input\_lifecycle\_configuration\_rules) | A list of lifecycle V2 rules | <pre>list(object({<br>    enabled = bool<br>    id      = string<br><br>    abort_incomplete_multipart_upload_days = number<br>    filter_and = any<br>    expiration = any<br>    transition = list(any)<br><br>    noncurrent_version_expiration = any<br>    noncurrent_version_transition = list(any)<br>  }))</pre> | `[]` | no |
 | <a name="input_lifecycle_rules"></a> [lifecycle\_rules](#input\_lifecycle\_rules) | A list of lifecycle rules. | <pre>list(object({<br>    prefix  = string<br>    enabled = bool<br>    tags    = map(string)<br><br>    enable_glacier_transition            = bool<br>    enable_deeparchive_transition        = bool<br>    enable_standard_ia_transition        = bool<br>    enable_current_object_expiration     = bool<br>    enable_noncurrent_version_expiration = bool<br><br>    abort_incomplete_multipart_upload_days         = number<br>    noncurrent_version_glacier_transition_days     = number<br>    noncurrent_version_deeparchive_transition_days = number<br>    noncurrent_version_expiration_days             = number<br><br>    standard_transition_days    = number<br>    glacier_transition_days     = number<br>    deeparchive_transition_days = number<br>    expiration_days             = number<br>  }))</pre> | <pre>[<br>  {<br>    "abort_incomplete_multipart_upload_days": 90,<br>    "deeparchive_transition_days": 90,<br>    "enable_current_object_expiration": true,<br>    "enable_deeparchive_transition": false,<br>    "enable_glacier_transition": true,<br>    "enable_noncurrent_version_expiration": true,<br>    "enable_standard_ia_transition": false,<br>    "enabled": false,<br>    "expiration_days": 90,<br>    "glacier_transition_days": 60,<br>    "noncurrent_version_deeparchive_transition_days": 60,<br>    "noncurrent_version_expiration_days": 90,<br>    "noncurrent_version_glacier_transition_days": 30,<br>    "prefix": "",<br>    "standard_transition_days": 30,<br>    "tags": {}<br>  }<br>]</pre> | no |
 | <a name="input_name"></a> [name](#input\_name) | ID element. Usually the component or solution name, e.g. 'app' or 'jenkins'.<br>This is the only ID element not also included as a `tag`.<br>The "name" tag is set to the full `id` string. There is no tag with the value of the `name` input. | `string` | `null` | no |
 | <a name="input_namespace"></a> [namespace](#input\_namespace) | ID element. Usually an abbreviation of your organization name, e.g. 'eg' or 'cp', to help ensure generated IDs are globally unique | `string` | `null` | no |
@@ -210,15 +210,13 @@ module "lambda" {
 | <a name="output_alias_arn"></a> [alias\_arn](#output\_alias\_arn) | Alias ARN |
 | <a name="output_bucket_arn"></a> [bucket\_arn](#output\_bucket\_arn) | Bucket ARN |
 | <a name="output_bucket_domain_name"></a> [bucket\_domain\_name](#output\_bucket\_domain\_name) | FQDN of bucket |
-| <a name="output_bucket_id"></a> [bucket\_id](#output\_bucket\_id) | Bucket Name (aka ID) |
 | <a name="output_key_alias_name"></a> [key\_alias\_name](#output\_key\_alias\_name) | KMS key alias name |
 | <a name="output_key_arn"></a> [key\_arn](#output\_key\_arn) | Key ARN |
 | <a name="output_key_id"></a> [key\_id](#output\_key\_id) | Key ID |
 | <a name="output_lambda_arn"></a> [lambda\_arn](#output\_lambda\_arn) | The AWS Lambda function ARN |
-| <a name="output_role_arn"></a> [role\_arn](#output\_role\_arn) | The Amazon Resource Name (ARN) specifying the role |
+| <a name="output_role_arn"></a> [role\_arn](#output\_role\_arn) | Role ARN |
 | <a name="output_role_id"></a> [role\_id](#output\_role\_id) | The stable and unique string identifying the role |
 | <a name="output_role_name"></a> [role\_name](#output\_role\_name) | The name of the created role |
-| <a name="output_role_policy"></a> [role\_policy](#output\_role\_policy) | The Amazon Resource Name (ARN) specifying the role |
 | <a name="output_s3_export_path"></a> [s3\_export\_path](#output\_s3\_export\_path) | A path to exported data in an AWS S3 bucket |
 <!-- END_TF_DOCS -->
 
