@@ -1,4 +1,4 @@
-resource "aws_s3_bucket" "export" {
+ resource "aws_s3_bucket" "export" {
   bucket = "bucket-for-rds-snapshots-export"
 }
 
@@ -126,4 +126,56 @@ module "lambda" {
   kms_key_id           = aws_kms_key.export.key_id
   export_task_role_arn = aws_iam_role.export.arn
   lambda_policy_arn    = aws_iam_policy.lambda.arn
+}
+
+module "bucket" {
+  source                       = "../../"
+  acl                          = "private"
+  user_enabled                 = true
+  force_destroy                = true
+  versioning_enabled           = false
+  allow_encrypted_uploads_only = true
+  sse_algorithm                = "aws:kms"
+  name                         = "bucket-for-rds-snapshots-export"
+  lifecycle_rules              = var.lifecycle_rules
+  kms_master_key_arn           = module.kms_key.key_arn
+  allowed_bucket_actions       = var.allowed_bucket_actions
+  object_lock_configuration    = var.object_lock_configuration
+  context                      = module.this.context
+
+  lifecycle_configuration_rules = var.lifecycle_configuration_rules
+}
+
+module "kms_key" {
+  source                  = "cloudposse/kms-key/aws"
+  version                 = "0.12.1"
+  name                    = "key-key-lambda-rds-s3"
+  description             = "KMS key for lambda-rds-s3"
+  deletion_window_in_days = 7
+  enable_key_rotation     = false
+  context                 = module.this.context
+}
+
+module "role" {
+  source       = "cloudposse/iam-role/aws"
+  version      = "0.18.0"
+  name         = "export-task-role"
+  principals   = [
+    {
+      type        = "Service"
+      identifiers = ["export.rds.amazonaws.com"]
+    }
+  ]
+  use_fullname = true
+
+  policy_documents = [
+    data.aws_iam_policy_document.export_assume.json,
+    data.aws_iam_policy_document.export.json,
+    data.aws_iam_policy_document.lambda.json
+  ]
+  policy_document_count = 3
+  policy_description    = "IAM policy for s3 bucket"
+  role_description      = "IAM role for s3 bucket"
+
+  context = module.this.context
 }
