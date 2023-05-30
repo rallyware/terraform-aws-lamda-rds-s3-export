@@ -1,48 +1,43 @@
 variable "lambda_runtime" {
   type        = string
   default     = "python3.9"
-  description = "The runtime environment for the Lambda function you are uploading."
+  description = "The runtime environment for the Lambda function you are uploading"
 }
 
 variable "lambda_architectures" {
   type        = list(string)
   default     = ["arm64"]
-  description = "Instruction set architecture for AWS Lambda function."
+  description = "Instruction set architecture for AWS Lambda function"
 }
 
 variable "lambda_timeout" {
   type        = number
   default     = 5
-  description = "The amount of time the Lambda Function has to run in seconds."
+  description = "The amount of time the Lambda Function has to run in seconds"
 }
 
 variable "lambda_memory" {
   type        = number
   default     = 128
-  description = "Amount of memory in MB the Lambda Function can use at runtime."
+  description = "Amount of memory in MB the Lambda Function can use at runtime"
 }
 
 variable "lambda_description" {
   type        = string
   default     = "This Lambda function automates RDS snapshot export to S3"
-  description = "Description of what the Lambda Function does."
+  description = "Description of what the Lambda Function does"
 }
 
 variable "lambda_log_retention" {
   type        = number
   default     = 30
-  description = "Specifies the number of days you want to retain log events in the specified log group."
+  description = "Specifies the number of days you want to retain log events in the specified log group"
 }
 
 variable "s3_prefix" {
   type        = string
   default     = "RDS"
   description = "The Amazon S3 bucket prefix to use as the file name and path of the exported data"
-}
-
-variable "lambda_policy_arn" {
-  type        = string
-  description = "The ARN of custom IAM policy for lambda function that starts snapshot export task"
 }
 
 variable "principals" {
@@ -56,6 +51,16 @@ variable "principals" {
 variable "names" {
   type        = string
   description = "Bucket and IAM name"
+}
+
+variable "kms_description" {
+  type    = string
+  default = "KMS key for s3 bucket"
+}
+
+variable "sse_algorithm" {
+  type    = string
+  default = "aws:kms"
 }
 
 variable "lifecycle_configuration_rules" {
@@ -120,7 +125,7 @@ variable "lifecycle_rules" {
     expiration_days             = 90
   }]
 
-  description = "A list of lifecycle rules."
+  description = "A list of lifecycle rules"
 }
 
 variable "allowed_bucket_actions" {
@@ -130,11 +135,11 @@ variable "allowed_bucket_actions" {
 }
 
 variable "object_lock_configuration" {
-  type = object({
-    mode  = string # Valid values are GOVERNANCE and COMPLIANCE.
+    type  = object({
+    mode  = string
     days  = number
     years = number
   })
   default     = null
-  description = "A configuration for S3 object locking. With S3 Object Lock, you can store objects using a `write once, read many` (WORM) model. Object Lock can help prevent objects from being deleted or overwritten for a fixed amount of time or indefinitely."
+  description = "A configuration for S3 object locking. With S3 Object Lock, you can store objects using a `write once, read many` (WORM) model. Object Lock can help prevent objects from being deleted or overwritten for a fixed amount of time or indefinitely"
 }

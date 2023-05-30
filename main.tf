@@ -33,17 +33,17 @@ module "lambda" {
   timeout       = var.lambda_timeout
 
   custom_iam_policy_arns = [
-    var.lambda_policy_arn,
+    aws_iam_policy.lambda.arn
   ]
 
   cloudwatch_logs_retention_in_days = var.lambda_log_retention
   cloudwatch_event_rules = [
     {
-      name = "rds-automated-snapshot-created"
+      name = "rds-manual-snapshot-created"
       event_pattern = jsonencode({
         detail-type = ["RDS DB Snapshot Event"],
         detail = {
-          Message = ["Automated snapshot created"]
+          Message = ["Manual snapshot created"]
         }
       })
     }
@@ -53,57 +53,10 @@ module "lambda" {
     variables = {
       BACKUP_S3_BUCKET   = module.bucket.bucket_id
       BACKUP_KMS_KEY     = module.kms_key.key_id
-      BACKUP_EXPORT_ROLE = module.role.name
-      BACKUP_FOLDER      = var.s3_prefix
+      BACKUP_EXPORT_ROLE = aws_iam_role.export.arn
+      BACKUP_FOLDER      = aws_iam_policy.lambda.arn
     }
   }
-
-  context = module.this.context
-}
-
-module "kms_key" {
-  source                  = "cloudposse/kms-key/aws"
-  version                 = "0.12.1"
-  name                    = "key-key-lambda-rds-s3"
-  description             = "KMS key for lambda-rds-s3"
-  deletion_window_in_days = 7
-  enable_key_rotation     = false
-  context                 = module.this.context
-}
-
-module "bucket" {
-  source                       = "cloudposse/s3-bucket/aws"
-  version                      = "3.1.1"
-  acl                          = "private"
-  user_enabled                 = true
-  force_destroy                = true
-  versioning_enabled           = false
-  allow_encrypted_uploads_only = true
-  sse_algorithm                = "aws:kms"
-  name                         = var.names
-  lifecycle_rules              = var.lifecycle_rules
-  kms_master_key_arn           = module.kms_key.key_arn
-  allowed_bucket_actions       = var.allowed_bucket_actions
-  object_lock_configuration    = var.object_lock_configuration
-  context                      = module.this.context
-
-  lifecycle_configuration_rules = var.lifecycle_configuration_rules
-}
-
-module "role" {
-  source       = "cloudposse/iam-role/aws"
-  version      = "0.18.0"
-  name         = var.names
-  principals   = var.principals
-  use_fullname = true
-
-  policy_documents = [
-    join("", data.aws_iam_policy_document.resource_full_access[*].json),
-    join("", data.aws_iam_policy_document.base[*].json)
-  ]
-  policy_document_count = 2
-  policy_description    = "IAM policy for s3 bucket"
-  role_description      = "IAM for s3 bucket"
 
   context = module.this.context
 }
