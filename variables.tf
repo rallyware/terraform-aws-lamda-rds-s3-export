@@ -34,112 +34,26 @@ variable "lambda_log_retention" {
   description = "Specifies the number of days you want to retain log events in the specified log group"
 }
 
-variable "s3_prefix" {
+variable "export_key_deletion" {
+  type        = number
+  default     = 14
+  description = "Duration in days after which the key is deleted after destruction of the resource"
+}
+
+variable "export_key_description" {
   type        = string
-  default     = "RDS"
-  description = "The Amazon S3 bucket prefix to use as the file name and path of the exported data"
+  default     = "KMS key used by export task"
+  description = "The description of the key as viewed in AWS console"
 }
 
-variable "principals" {
-  type        = map(list(string))
-  description = "Map of service name as key and a list of ARNs to allow assuming the role as value (e.g. map(`AWS`, list(`arn:aws:iam:::role/admin`)))"
-  default = {
-    "AWS" : ["*"]
-  }
-}
-
-variable "names" {
+variable "export_role_description" {
   type        = string
-  description = "Bucket and IAM name"
+  default     = "IAM role used by export task"
+  description = "The description of the IAM role that is visible in the IAM role manager"
 }
 
-variable "kms_description" {
-  type    = string
-  default = "KMS key for s3 bucket"
-}
-
-variable "sse_algorithm" {
-  type    = string
-  default = "aws:kms"
-}
-
-variable "lifecycle_configuration_rules" {
-  type = list(object({
-    enabled = bool
-    id      = string
-
-    abort_incomplete_multipart_upload_days = number
-
-    filter_and = any
-    expiration = any
-    transition = list(any)
-
-    noncurrent_version_expiration = any
-    noncurrent_version_transition = list(any)
-  }))
-  default     = []
-  description = "A list of lifecycle V2 rules"
-}
-
-variable "lifecycle_rules" {
-  type = list(object({
-    prefix  = string
-    enabled = bool
-    tags    = map(string)
-
-    enable_glacier_transition            = bool
-    enable_deeparchive_transition        = bool
-    enable_standard_ia_transition        = bool
-    enable_current_object_expiration     = bool
-    enable_noncurrent_version_expiration = bool
-
-    abort_incomplete_multipart_upload_days         = number
-    noncurrent_version_glacier_transition_days     = number
-    noncurrent_version_deeparchive_transition_days = number
-    noncurrent_version_expiration_days             = number
-
-    standard_transition_days    = number
-    glacier_transition_days     = number
-    deeparchive_transition_days = number
-    expiration_days             = number
-  }))
-  default = [{
-    prefix  = ""
-    enabled = false
-    tags    = {}
-
-    enable_glacier_transition            = true
-    enable_deeparchive_transition        = false
-    enable_standard_ia_transition        = false
-    enable_current_object_expiration     = true
-    enable_noncurrent_version_expiration = true
-
-    abort_incomplete_multipart_upload_days         = 90
-    noncurrent_version_glacier_transition_days     = 30
-    noncurrent_version_deeparchive_transition_days = 60
-    noncurrent_version_expiration_days             = 90
-
-    standard_transition_days    = 30
-    glacier_transition_days     = 60
-    deeparchive_transition_days = 90
-    expiration_days             = 90
-  }]
-
-  description = "A list of lifecycle rules"
-}
-
-variable "allowed_bucket_actions" {
-  type        = list(string)
-  default     = ["s3:PutObject", "s3:PutObjectAcl", "s3:GetObject", "s3:DeleteObject", "s3:ListBucket", "s3:ListBucketMultipartUploads", "s3:GetBucketLocation", "s3:AbortMultipartUpload"]
-  description = "List of actions the user is permitted to perform on the S3 bucket"
-}
-
-variable "object_lock_configuration" {
-    type  = object({
-    mode  = string
-    days  = number
-    years = number
-  })
-  default     = null
-  description = "A configuration for S3 object locking. With S3 Object Lock, you can store objects using a `write once, read many` (WORM) model. Object Lock can help prevent objects from being deleted or overwritten for a fixed amount of time or indefinitely"
+variable "export_role_policy_description" {
+  type        = string
+  default     = "IAM policy for role that used by export task"
+  description = "The description of the IAM policy that is visible in the IAM policy manager"
 }

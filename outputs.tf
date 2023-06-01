@@ -1,54 +1,24 @@
-output "s3_export_path" {
-  value       = local.enabled ? "s3://${module.bucket.bucket_id}/${var.s3_prefix}/" : null
-  description = "A path to exported data in an AWS S3 bucket"
-}
-
 output "lambda_arn" {
   value       = module.lambda.arn
   description = "The AWS Lambda function ARN"
 }
 
-output "key_arn" {
+output "lambda_role_arn" {
+  value       = module.lambda.role_arn
+  description = "The AWS Lambda function role ARN"
+}
+
+output "export_key_arn" {
   value       = module.kms_key.key_arn
-  description = "Key ARN"
+  description = "The ARN of KMS key used by export task"
 }
 
-output "key_id" {
-  value       = module.kms_key.key_id
-  description = "Key ID"
-}
-
-output "alias_arn" {
-  value       = module.kms_key.alias_arn
-  description = "Alias ARN"
-}
-
-output "role_name" {
-  value       = module.role.name
-  description = "The name of the created role"
-}
-
-output "role_id" {
-  value       = module.role.id
-  description = "The stable and unique string identifying the role"
-}
-
-output "role_arn" {
+output "export_role_arn" {
   value       = module.role.arn
-  description = "Role ARN"
-}
-
-output "key_alias_name" {
-  value       = module.kms_key.alias_name
-  description = "KMS key alias name"
-}
-
-output "bucket_domain_name" {
-  value       = module.bucket.bucket_domain_name
-  description = "FQDN of bucket"
+  description = "The ARN of IAM role used by export task"
 }
 
 output "bucket_arn" {
   value       = module.bucket.bucket_arn
-  description = "Bucket ARN"
+  description = "The AWS S3 bucket ARN"
 }

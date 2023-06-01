@@ -1,7 +1,11 @@
 locals {
-  enabled    = module.this.enabled
-  lambda_src = "${path.module}/lambda"
+  enabled            = module.this.enabled
+  lambda_src         = "${path.module}/lambda"
+  lambda_policy_name = join(module.this.delimiter, [module.this.id, "policy"])
+  lambda_policy_arn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/${local.lambda_policy_name}"
 }
+
+data "aws_caller_identity" "current" {}
 
 resource "random_id" "build" {
   count = local.enabled ? 1 : 0
@@ -20,6 +24,62 @@ data "archive_file" "build" {
   type        = "zip"
 }
 
+data "aws_iam_policy_document" "lambda" {
+  count = local.enabled ? 1 : 0
+
+  version = "2012-10-17"
+
+  statement {
+    sid = "AllowExportDescribeSnapshot"
+    actions = [
+      "rds:StartExportTask",
+      "rds:DescribeDBSnapshots"
+    ]
+    resources = [
+      "*"
+    ]
+    effect = "Allow"
+  }
+
+  statement {
+    sid = "AllowGetPassRole"
+    actions = [
+      "iam:GetRole",
+      "iam:PassRole"
+    ]
+    resources = [
+      module.role.arn
+    ]
+    effect = "Allow"
+  }
+
+  statement {
+    sid = "AllowExportKeyKMS"
+    actions = [
+      "kms:Encrypt",
+      "kms:Decrypt",
+      "kms:GenerateDataKey",
+      "kms:GenerateDataKeyWithoutPlaintext",
+      "kms:ReEncryptFrom",
+      "kms:ReEncryptTo",
+      "kms:CreateGrant",
+      "kms:DescribeKey",
+      "kms:RetireGrant",
+    ]
+    resources = [
+      module.kms_key.key_arn
+    ]
+    effect = "Allow"
+  }
+}
+
+resource "aws_iam_policy" "lambda" {
+  count = local.enabled ? 1 : 0
+
+  name   = local.lambda_policy_name
+  policy = data.aws_iam_policy_document.lambda[0].json
+}
+
 module "lambda" {
   source  = "rallyware/lambda-function/aws"
   version = "0.1.0"
@@ -33,7 +93,7 @@ module "lambda" {
   timeout       = var.lambda_timeout
 
   custom_iam_policy_arns = [
-    aws_iam_policy.lambda.arn
+    local.lambda_policy_arn
   ]
 
   cloudwatch_logs_retention_in_days = var.lambda_log_retention
@@ -53,10 +113,14 @@ module "lambda" {
     variables = {
       BACKUP_S3_BUCKET   = module.bucket.bucket_id
       BACKUP_KMS_KEY     = module.kms_key.key_id
-      BACKUP_EXPORT_ROLE = aws_iam_role.export.arn
-      BACKUP_FOLDER      = aws_iam_policy.lambda.arn
+      BACKUP_EXPORT_ROLE = module.role.arn
     }
   }
 
-  context = module.this.context
+  depends_on = [
+    aws_iam_policy.lambda
+  ]
+
+  attributes = ["lambda"]
+  context    = module.this.context
 }
