@@ -99,11 +99,11 @@ module "lambda" {
   cloudwatch_logs_retention_in_days = var.lambda_log_retention
   cloudwatch_event_rules = [
     {
-      name = "rds-manual-snapshot-created"
+      name = "rds-automated-snapshot-created"
       event_pattern = jsonencode({
         detail-type = ["RDS DB Snapshot Event"],
         detail = {
-          Message = ["Manual snapshot created"]
+          Message = ["Automated snapshot created"]
         }
       })
     }
