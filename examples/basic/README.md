@@ -14,7 +14,7 @@ No providers.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_lambda"></a> [lambda](#module\_lambda) | ../../ | n/a |
+| <a name="module_export"></a> [export](#module\_export) | ../../ | n/a |
 
 ## Resources
 
