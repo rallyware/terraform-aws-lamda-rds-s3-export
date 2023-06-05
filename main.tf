@@ -5,8 +5,6 @@ locals {
   lambda_policy_arn  = one(aws_iam_policy.lambda[*].arn)
 }
 
-data "aws_caller_identity" "current" {}
-
 resource "random_id" "build" {
   count = local.enabled ? 1 : 0
 
