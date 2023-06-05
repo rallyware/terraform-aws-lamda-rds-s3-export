@@ -1,9 +1,11 @@
 locals {
   enabled            = module.this.enabled
   lambda_src         = "${path.module}/lambda"
-  lambda_policy_name = join(module.this.delimiter, [module.this.id])
-  lambda_policy_arn  = one(aws_iam_policy.lambda[*].arn)
+  lambda_policy_name = module.this.id
+  lambda_policy_arn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/${local.lambda_policy_name}"
 }
+
+data "aws_caller_identity" "current" {}
 
 resource "random_id" "build" {
   count = local.enabled ? 1 : 0
@@ -115,6 +117,10 @@ module "lambda" {
       BACKUP_EXPORT_ROLE = module.role.arn
     }
   }
+
+  depends_on = [
+    aws_iam_policy.lambda
+  ]
 
   context = module.this.context
 }

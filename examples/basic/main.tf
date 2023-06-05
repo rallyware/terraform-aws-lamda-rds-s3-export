@@ -1,7 +1,7 @@
 module "export" {
   source = "../../"
 
-  namespace   = "exl"
+  namespace   = "ex"
   environment = "dev"
-  name        = "rds-export"
+  name        = "export"
 }

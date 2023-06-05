@@ -1,4 +1,4 @@
-data "aws_iam_policy_document" "export" {
+data "aws_iam_policy_document" "task" {
   count = local.enabled ? 1 : 0
 
   version = "2012-10-17"
@@ -28,12 +28,14 @@ module "role" {
   policy_description    = var.role_policy_description
   policy_document_count = 1
   policy_documents = [
-    one(data.aws_iam_policy_document.export[*].json)
+    one(data.aws_iam_policy_document.task[*].json)
   ]
 
   principals = {
     "Service" : ["export.rds.amazonaws.com"]
   }
+
+  attributes = ["task"]
 
   context = module.this.context
 }
