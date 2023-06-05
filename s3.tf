@@ -3,5 +3,5 @@ module "bucket" {
   version = "3.1.1"
   acl     = "private"
 
-  context    = module.this.context
+  context = module.this.context
 }

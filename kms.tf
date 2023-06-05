@@ -5,5 +5,5 @@ module "kms_key" {
   deletion_window_in_days = var.key_deletion
   enable_key_rotation     = false
 
-  context    = module.this.context
+  context = module.this.context
 }

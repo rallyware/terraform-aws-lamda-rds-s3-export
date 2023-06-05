@@ -36,5 +36,5 @@ module "role" {
     "Service" : ["export.rds.amazonaws.com"]
   }
 
-  context    = module.this.context
+  context = module.this.context
 }
