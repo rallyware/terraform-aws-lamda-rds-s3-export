@@ -110,11 +110,11 @@ module "lambda" {
   lambda_environment = {
     variables = {
       BACKUP_S3_BUCKET   = module.bucket.bucket_id
+      BACKUP_FOLDER      = var.s3_folder
       BACKUP_KMS_KEY     = module.kms_key.key_id
       BACKUP_EXPORT_ROLE = module.role.arn
     }
   }
 
-  attributes = ["lambda"]
-  context    = module.this.context
+  context = module.this.context
 }

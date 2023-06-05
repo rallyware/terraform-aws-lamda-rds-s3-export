@@ -34,6 +34,12 @@ variable "lambda_log_retention" {
   description = "Specifies the number of days you want to retain log events in the specified log group"
 }
 
+variable "s3_folder" {
+  type        = string
+  default     = "instance"
+  description = "The Amazon S3 bucket folder to use as path of the exported data"
+}
+
 variable "key_deletion" {
   type        = number
   default     = 14
