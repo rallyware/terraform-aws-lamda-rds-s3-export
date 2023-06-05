@@ -34,25 +34,25 @@ variable "lambda_log_retention" {
   description = "Specifies the number of days you want to retain log events in the specified log group"
 }
 
-variable "export_key_deletion" {
+variable "key_deletion" {
   type        = number
   default     = 14
   description = "Duration in days after which the key is deleted after destruction of the resource"
 }
 
-variable "export_key_description" {
+variable "key_description" {
   type        = string
   default     = "KMS key used by export task"
   description = "The description of the key as viewed in AWS console"
 }
 
-variable "export_role_description" {
+variable "role_description" {
   type        = string
   default     = "IAM role used by export task"
   description = "The description of the IAM role that is visible in the IAM role manager"
 }
 
-variable "export_role_policy_description" {
+variable "role_policy_description" {
   type        = string
   default     = "IAM policy for role that used by export task"
   description = "The description of the IAM policy that is visible in the IAM policy manager"

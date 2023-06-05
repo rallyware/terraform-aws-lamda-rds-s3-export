@@ -24,9 +24,9 @@ module "role" {
   source  = "cloudposse/iam-role/aws"
   version = "0.18.0"
 
-  role_description = var.export_role_description
+  role_description = var.role_description
 
-  policy_description    = var.export_role_policy_description
+  policy_description    = var.role_policy_description
   policy_document_count = 1
   policy_documents = [
     one(data.aws_iam_policy_document.export[*].json)
@@ -36,6 +36,5 @@ module "role" {
     "Service" : ["export.rds.amazonaws.com"]
   }
 
-  attributes = ["role"]
   context    = module.this.context
 }

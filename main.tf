@@ -1,8 +1,8 @@
 locals {
   enabled            = module.this.enabled
   lambda_src         = "${path.module}/lambda"
-  lambda_policy_name = join(module.this.delimiter, [module.this.id, "policy"])
-  lambda_policy_arn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/${local.lambda_policy_name}"
+  lambda_policy_name = join(module.this.delimiter, [module.this.id])
+  lambda_policy_arn  = one(aws_iam_policy.lambda[*].arn)
 }
 
 data "aws_caller_identity" "current" {}
@@ -116,10 +116,6 @@ module "lambda" {
       BACKUP_EXPORT_ROLE = module.role.arn
     }
   }
-
-  depends_on = [
-    aws_iam_policy.lambda
-  ]
 
   attributes = ["lambda"]
   context    = module.this.context

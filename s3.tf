@@ -3,6 +3,5 @@ module "bucket" {
   version = "3.1.1"
   acl     = "private"
 
-  attributes = ["storage"]
   context    = module.this.context
 }
