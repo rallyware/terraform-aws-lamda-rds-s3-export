@@ -24,8 +24,7 @@ module "role" {
   source  = "cloudposse/iam-role/aws"
   version = "0.18.0"
 
-  role_description = var.role_description
-
+  role_description      = var.role_description
   policy_description    = var.role_policy_description
   policy_document_count = 1
   policy_documents = [
