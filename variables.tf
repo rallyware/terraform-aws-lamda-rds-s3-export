@@ -34,6 +34,18 @@ variable "lambda_log_retention" {
   description = "Specifies the number of days you want to retain log events in the specified log group"
 }
 
+variable "lambda_policy_description" {
+  type        = string
+  default     = "IAM policy for role used by lambda that starts the export task"
+  description = "The description of the IAM policy for the lambda role"
+}
+
+variable "lambda_role_description" {
+  type        = string
+  default     = "IAM role used by lambda that starts the export task"
+  description = "The description of the IAM role for the lambda function"
+}
+
 variable "s3_folder" {
   type        = string
   default     = "instance"
@@ -48,18 +60,18 @@ variable "key_deletion" {
 
 variable "key_description" {
   type        = string
-  default     = "KMS key used by export task"
-  description = "The description of the key as viewed in AWS console"
+  default     = "KMS key used by an export task"
+  description = "The description of the key used by an export task"
 }
 
 variable "role_description" {
   type        = string
-  default     = "IAM role used by export task"
-  description = "The description of the IAM role that is visible in the IAM role manager"
+  default     = "IAM role used by an export task"
+  description = "The description of the IAM role used by an export task"
 }
 
 variable "role_policy_description" {
   type        = string
-  default     = "IAM policy for role that used by export task"
-  description = "The description of the IAM policy that is visible in the IAM policy manager"
+  default     = "IAM policy for the role that is used by an export task"
+  description = "The description of the IAM policy used by an export task"
 }

@@ -1,11 +1,7 @@
 locals {
-  enabled            = module.this.enabled
-  lambda_src         = "${path.module}/lambda"
-  lambda_policy_name = module.this.id
-  lambda_policy_arn  = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/${local.lambda_policy_name}"
+  enabled    = module.this.enabled
+  lambda_src = "${path.module}/lambda"
 }
-
-data "aws_caller_identity" "current" {}
 
 resource "random_id" "build" {
   count = local.enabled ? 1 : 0
@@ -73,16 +69,9 @@ data "aws_iam_policy_document" "lambda" {
   }
 }
 
-resource "aws_iam_policy" "lambda" {
-  count = local.enabled ? 1 : 0
-
-  name   = local.lambda_policy_name
-  policy = data.aws_iam_policy_document.lambda[0].json
-}
-
 module "lambda" {
   source  = "rallyware/lambda-function/aws"
-  version = "0.1.0"
+  version = "0.2.0"
 
   handler       = "main.lambda_handler"
   filename      = one(data.archive_file.build[*].output_path)
@@ -92,8 +81,10 @@ module "lambda" {
   memory_size   = var.lambda_memory
   timeout       = var.lambda_timeout
 
-  custom_iam_policy_arns = [
-    local.lambda_policy_arn
+  iam_policy_description = var.lambda_policy_description
+  iam_role_description   = var.lambda_role_description
+  iam_policy_documents = [
+    one(data.aws_iam_policy_document.lambda[*].json)
   ]
 
   cloudwatch_logs_retention_in_days = var.lambda_log_retention
@@ -117,10 +108,6 @@ module "lambda" {
       BACKUP_EXPORT_ROLE = module.role.arn
     }
   }
-
-  depends_on = [
-    aws_iam_policy.lambda
-  ]
 
   context = module.this.context
 }
