@@ -35,7 +35,7 @@ module "role" {
     "Service" : ["export.rds.amazonaws.com"]
   }
 
-  attributes = ["task"]
+  attributes = concat(module.this.attributes, ["task"])
 
   context = module.this.context
 }
