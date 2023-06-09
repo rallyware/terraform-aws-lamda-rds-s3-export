@@ -1,9 +1,24 @@
-output "s3_export_path" {
-  value       = local.enabled ? "s3://${var.s3_bucket_id}/${var.s3_prefix}/" : null
-  description = "A path to exported data in an AWS S3 bucket"
-}
-
 output "lambda_arn" {
   value       = module.lambda.arn
   description = "The AWS Lambda function ARN"
+}
+
+output "lambda_role_arn" {
+  value       = module.lambda.role_arn
+  description = "The AWS Lambda function role ARN"
+}
+
+output "key_arn" {
+  value       = module.kms_key.key_arn
+  description = "The ARN of KMS key used by export task"
+}
+
+output "role_arn" {
+  value       = module.role.arn
+  description = "The ARN of IAM role used by export task"
+}
+
+output "bucket_arn" {
+  value       = module.bucket.bucket_arn
+  description = "The AWS S3 bucket ARN"
 }

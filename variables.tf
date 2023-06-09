@@ -1,61 +1,77 @@
 variable "lambda_runtime" {
   type        = string
   default     = "python3.9"
-  description = "The runtime environment for the Lambda function you are uploading."
+  description = "The runtime environment for the Lambda function you are uploading"
 }
 
 variable "lambda_architectures" {
   type        = list(string)
   default     = ["arm64"]
-  description = "Instruction set architecture for AWS Lambda function."
+  description = "Instruction set architecture for AWS Lambda function"
 }
 
 variable "lambda_timeout" {
   type        = number
   default     = 5
-  description = "The amount of time the Lambda Function has to run in seconds."
+  description = "The amount of time the Lambda Function has to run in seconds"
 }
 
 variable "lambda_memory" {
   type        = number
   default     = 128
-  description = "Amount of memory in MB the Lambda Function can use at runtime."
+  description = "Amount of memory in MB the Lambda Function can use at runtime"
 }
 
 variable "lambda_description" {
   type        = string
   default     = "This Lambda function automates RDS snapshot export to S3"
-  description = "Description of what the Lambda Function does."
+  description = "Description of what the Lambda Function does"
 }
 
 variable "lambda_log_retention" {
   type        = number
   default     = 30
-  description = "Specifies the number of days you want to retain log events in the specified log group."
+  description = "Specifies the number of days you want to retain log events in the specified log group"
 }
 
-variable "s3_bucket_id" {
+variable "lambda_policy_description" {
   type        = string
-  description = "The name of the Amazon S3 bucket to export the snapshot to"
+  default     = "IAM policy for role used by lambda that starts the export task"
+  description = "The description of the IAM policy for the lambda role"
 }
 
-variable "s3_prefix" {
+variable "lambda_role_description" {
   type        = string
-  default     = "RDS"
-  description = "The Amazon S3 bucket prefix to use as the file name and path of the exported data"
+  default     = "IAM role used by lambda that starts the export task"
+  description = "The description of the IAM role for the lambda function"
 }
 
-variable "kms_key_id" {
+variable "s3_folder" {
   type        = string
-  description = "The ID of the Amazon Web Services KMS key to use to encrypt the data exported to Amazon S3"
+  default     = "instance"
+  description = "The Amazon S3 bucket folder to use as path of the exported data"
 }
 
-variable "export_task_role_arn" {
-  type        = string
-  description = "The name of the IAM role to use for writing to the Amazon S3 bucket when exporting a snapshot"
+variable "key_deletion" {
+  type        = number
+  default     = 14
+  description = "Duration in days after which the key is deleted after destruction of the resource"
 }
 
-variable "lambda_policy_arn" {
+variable "key_description" {
   type        = string
-  description = "The ARN of custom IAM policy for lambda function that starts snapshot export task"
+  default     = "KMS key used by an export task"
+  description = "The description of the key used by an export task"
+}
+
+variable "role_description" {
+  type        = string
+  default     = "IAM role used by an export task"
+  description = "The description of the IAM role used by an export task"
+}
+
+variable "role_policy_description" {
+  type        = string
+  default     = "IAM policy for the role that is used by an export task"
+  description = "The description of the IAM policy used by an export task"
 }

@@ -8,31 +8,17 @@
 
 ## Providers
 
-| Name | Version |
-|------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 4 |
+No providers.
 
 ## Modules
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_lambda"></a> [lambda](#module\_lambda) | ../../ | n/a |
+| <a name="module_export"></a> [export](#module\_export) | ../../ | n/a |
 
 ## Resources
 
-| Name | Type |
-|------|------|
-| [aws_iam_policy.export](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
-| [aws_iam_policy.lambda](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
-| [aws_iam_role.export](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
-| [aws_iam_role_policy_attachment.export](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
-| [aws_kms_alias.export](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/kms_alias) | resource |
-| [aws_kms_key.export](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/kms_key) | resource |
-| [aws_s3_bucket.export](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket) | resource |
-| [aws_s3_bucket_acl.export](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_acl) | resource |
-| [aws_iam_policy_document.export](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
-| [aws_iam_policy_document.export_assume](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
-| [aws_iam_policy_document.lambda](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+No resources.
 
 ## Inputs
 
