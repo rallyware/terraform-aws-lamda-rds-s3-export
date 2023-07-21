@@ -52,6 +52,24 @@ variable "s3_folder" {
   description = "The Amazon S3 bucket folder to use as path of the exported data"
 }
 
+variable "s3_lifecycle_configuration_rules" {
+  type = list(object({
+    enabled = bool
+    id      = string
+
+    abort_incomplete_multipart_upload_days = number
+
+    filter_and = any
+    expiration = any
+    transition = list(any)
+
+    noncurrent_version_expiration = any
+    noncurrent_version_transition = list(any)
+  }))
+  default     = []
+  description = "A list of lifecycle V2 rules"
+}
+
 variable "key_deletion" {
   type        = number
   default     = 14
