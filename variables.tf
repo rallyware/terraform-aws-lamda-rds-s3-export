@@ -93,3 +93,9 @@ variable "role_policy_description" {
   default     = "IAM policy for the role that is used by an export task"
   description = "The description of the IAM policy used by an export task"
 }
+
+variable "allowed_kms_alias" {
+  type        = list(string)
+  default     = ["alias/*rds*"]
+  description = "A list of KMS aliases that are allowed to be used by the lambda function"
+}
