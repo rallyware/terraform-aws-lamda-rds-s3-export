@@ -67,23 +67,6 @@ data "aws_iam_policy_document" "lambda" {
     ]
     effect = "Allow"
   }
-
-  statement {
-    sid = "AllowKMSAlias"
-    actions = [
-      "kms:Decrypt",
-      "kms:GenerateDataKey*",
-      "kms:DescribeKey"
-    ]
-
-    condition {
-      test     = "StringLike"
-      variable = "kms:RequestAlias"
-      values   = var.allowed_kms_alias
-    }
-
-    resources = ["*"]
-  }
 }
 
 module "lambda" {
