@@ -46,6 +46,36 @@ variable "lambda_role_description" {
   description = "The description of the IAM role for the lambda function"
 }
 
+variable "cloudwatch_event_rules" {
+  type = list(object(
+    {
+      name = string
+      event_pattern = object(
+        {
+          detail_type = list(string)
+          detail = object(
+            {
+              message = list(string)
+            }
+          )
+        }
+      )
+    }
+  ))
+  default = [
+    {
+      event_pattern = {
+        detail = {
+          message = ["Automated snapshot created"]
+        }
+        detail_type = ["RDS DB Snapshot Event"]
+      }
+      name = "rds-automated-snapshot-created"
+    }
+  ]
+  description = "A list of CloudWatch Event Rules to trigger the Lambda function"
+}
+
 variable "s3_folder" {
   type        = string
   default     = "instance"
