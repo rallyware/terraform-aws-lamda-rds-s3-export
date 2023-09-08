@@ -15,15 +15,23 @@ boto3_session = boto3.Session()
 
 def lambda_handler(event, context):
     snapshot_arn = event['detail']['SourceArn']
+    source_type = event['detail']['SourceType']
     
     rds_client = boto3_session.client('rds')
 
-    snapshot = rds_client.describe_db_snapshots(
-        DBSnapshotIdentifier=snapshot_arn,
-    )['DBSnapshots'][0]
-    
-    instance_id = snapshot['DBInstanceIdentifier']
-    snapshot_time = snapshot['SnapshotCreateTime']
+    if source_type == 'db-snapshot':
+        snapshot = rds_client.describe_db_snapshots(
+            DBSnapshotIdentifier=snapshot_arn,
+        )['DBSnapshots'][0]
+
+        instance_id = snapshot['DBInstanceIdentifier']
+        snapshot_time = snapshot['SnapshotCreateTime']
+    else:
+        snapshot = rds_client.describe_db_cluster_snapshots(
+            DBClusterSnapshotIdentifier=snapshot_arn,
+        )['DBClusterSnapshots'][0]
+        instance_id = snapshot['DBClusterIdentifier']
+        snapshot_time = snapshot['SnapshotCreateTime']
 
     s3_prefix = "{0}/{1}".format(BACKUP_FOLDER, instance_id)
     export_id = "{0}-{1}".format(''.join(filter(str.isalnum, instance_id)), snapshot_time.strftime("%y%m%d%H%M"))

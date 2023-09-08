@@ -29,7 +29,8 @@ data "aws_iam_policy_document" "lambda" {
     sid = "AllowExportDescribeSnapshot"
     actions = [
       "rds:StartExportTask",
-      "rds:DescribeDBSnapshots"
+      "rds:DescribeDBSnapshots",
+      "rds:DescribeDBClusterSnapshots"
     ]
     resources = [
       "*"
@@ -66,6 +67,24 @@ data "aws_iam_policy_document" "lambda" {
       module.kms_key.key_arn
     ]
     effect = "Allow"
+  }
+
+  statement {
+    sid = "AllowKMSByAlias"
+    actions = [
+      "kms:Decrypt",
+      "kms:GenerateDataKey*",
+      "kms:DescribeKey",
+      "kms:CreateGrant"
+    ]
+
+    condition {
+      test     = "ForAnyValue:StringLike"
+      variable = "kms:ResourceAliases"
+      values   = var.allowed_kms_aliases
+    }
+
+    resources = ["*"]
   }
 }
 
