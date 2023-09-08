@@ -70,7 +70,7 @@ variable "cloudwatch_event_rules" {
         }
         detail_type = ["RDS DB Snapshot Event"]
       }
-      name = "rds-automated-snapshot-created"
+      name = "rds-snapshot-created"
     },
     {
       event_pattern = {
@@ -79,7 +79,7 @@ variable "cloudwatch_event_rules" {
         }
         detail_type = ["RDS DB Cluster Snapshot Event"]
       }
-      name = "rds-automated-cluster-snapshot"
+      name = "rds-cluster-snapshot-created"
     }
   ]
   description = "A list of CloudWatch Event Rules to trigger the Lambda function"
