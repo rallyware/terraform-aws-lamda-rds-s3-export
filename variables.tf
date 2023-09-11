@@ -46,6 +46,45 @@ variable "lambda_role_description" {
   description = "The description of the IAM role for the lambda function"
 }
 
+variable "cloudwatch_event_rules" {
+  type = list(object(
+    {
+      name = string
+      event_pattern = object(
+        {
+          detail_type = list(string)
+          detail = object(
+            {
+              message = list(string)
+            }
+          )
+        }
+      )
+    }
+  ))
+  default = [
+    {
+      event_pattern = {
+        detail = {
+          message = ["Automated snapshot created"]
+        }
+        detail_type = ["RDS DB Snapshot Event"]
+      }
+      name = "rds-snapshot-created"
+    },
+    {
+      event_pattern = {
+        detail = {
+          message = ["Automated cluster snapshot created"]
+        }
+        detail_type = ["RDS DB Cluster Snapshot Event"]
+      }
+      name = "rds-cluster-snapshot-created"
+    }
+  ]
+  description = "A list of CloudWatch Event Rules to trigger the Lambda function"
+}
+
 variable "s3_folder" {
   type        = string
   default     = "instance"
@@ -92,4 +131,10 @@ variable "role_policy_description" {
   type        = string
   default     = "IAM policy for the role that is used by an export task"
   description = "The description of the IAM policy used by an export task"
+}
+
+variable "allowed_kms_aliases" {
+  type        = list(string)
+  default     = ["alias/*rds*"]
+  description = "A list of KMS aliases that are allowed to be used by the lambda function"
 }

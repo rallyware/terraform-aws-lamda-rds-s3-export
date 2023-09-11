@@ -29,7 +29,8 @@ data "aws_iam_policy_document" "lambda" {
     sid = "AllowExportDescribeSnapshot"
     actions = [
       "rds:StartExportTask",
-      "rds:DescribeDBSnapshots"
+      "rds:DescribeDBSnapshots",
+      "rds:DescribeDBClusterSnapshots"
     ]
     resources = [
       "*"
@@ -67,6 +68,24 @@ data "aws_iam_policy_document" "lambda" {
     ]
     effect = "Allow"
   }
+
+  statement {
+    sid = "AllowKMSByAlias"
+    actions = [
+      "kms:Decrypt",
+      "kms:GenerateDataKey*",
+      "kms:DescribeKey",
+      "kms:CreateGrant"
+    ]
+
+    condition {
+      test     = "ForAnyValue:StringLike"
+      variable = "kms:ResourceAliases"
+      values   = var.allowed_kms_aliases
+    }
+
+    resources = ["*"]
+  }
 }
 
 module "lambda" {
@@ -88,15 +107,18 @@ module "lambda" {
   ]
 
   cloudwatch_logs_retention_in_days = var.lambda_log_retention
-  cloudwatch_event_rules = [
+
+  cloudwatch_event_rules = [for rule in var.cloudwatch_event_rules :
     {
-      name = "rds-automated-snapshot-created"
-      event_pattern = jsonencode({
-        detail-type = ["RDS DB Snapshot Event"],
-        detail = {
-          Message = ["Automated snapshot created"]
+      name = rule.name
+      event_pattern = jsonencode(
+        {
+          detail-type = rule.event_pattern.detail_type
+          detail = {
+            Message = rule.event_pattern.detail.message
+          }
         }
-      })
+      )
     }
   ]
 
