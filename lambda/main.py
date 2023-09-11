@@ -13,13 +13,14 @@ logger.setLevel(logging.INFO)
 
 boto3_session = boto3.Session()
 
+
 def lambda_handler(event, context):
     snapshot_arn = event['detail']['SourceArn']
-    source_type = event['detail']['SourceType']
-    
+    event_id = event['detail']['EventID']
+
     rds_client = boto3_session.client('rds')
 
-    if source_type == 'db-snapshot':
+    if 'RDS-EVENT-0091' in event_id:
         snapshot = rds_client.describe_db_snapshots(
             DBSnapshotIdentifier=snapshot_arn,
         )['DBSnapshots'][0]
@@ -34,7 +35,8 @@ def lambda_handler(event, context):
         snapshot_time = snapshot['SnapshotCreateTime']
 
     s3_prefix = "{0}/{1}".format(BACKUP_FOLDER, instance_id)
-    export_id = "{0}-{1}".format(''.join(filter(str.isalnum, instance_id)), snapshot_time.strftime("%y%m%d%H%M"))
+    export_id = "{0}-{1}".format(''.join(filter(str.isalnum,
+                                 instance_id)), snapshot_time.strftime("%y%m%d%H%M"))
 
     export = rds_client.start_export_task(
         ExportTaskIdentifier=export_id,
@@ -45,4 +47,5 @@ def lambda_handler(event, context):
         S3Prefix=s3_prefix,
     )
 
-    logger.info("ExportTaskIdentifier={0}, SourceArn={1}".format(export_id, snapshot_arn))
+    logger.info("ExportTaskIdentifier={0}, SourceArn={1}".format(
+        export_id, snapshot_arn))
