@@ -32,12 +32,14 @@ def lambda_handler(event, context):
         )['DBSnapshots'][0]
         instance_id = snapshot['DBInstanceIdentifier']
         snapshot_time = snapshot['SnapshotCreateTime']
+
     elif event_id in [AUTOMATED_CLUSTER_SNAPSHOT_CREATED, MANUAL_CLUSTER_SNAPSHOT_CREATED]:
         snapshot = rds_client.describe_db_cluster_snapshots(
             DBClusterSnapshotIdentifier=snapshot_arn,
         )['DBClusterSnapshots'][0]
         instance_id = snapshot['DBClusterIdentifier']
         snapshot_time = snapshot['SnapshotCreateTime']
+        
     else:
         raise RuntimeError('Unsupported EventID: {0}'.format(event_id))
 
