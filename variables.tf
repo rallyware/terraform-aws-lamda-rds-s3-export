@@ -46,43 +46,20 @@ variable "lambda_role_description" {
   description = "The description of the IAM role for the lambda function"
 }
 
-variable "cloudwatch_event_rules" {
-  type = list(object(
-    {
-      name = string
-      event_pattern = object(
-        {
-          detail_type = list(string)
-          detail = object(
-            {
-              message = list(string)
-            }
-          )
-        }
-      )
-    }
-  ))
-  default = [
-    {
-      event_pattern = {
-        detail = {
-          message = ["Automated snapshot created"]
-        }
-        detail_type = ["RDS DB Snapshot Event"]
-      }
-      name = "rds-snapshot-created"
-    },
-    {
-      event_pattern = {
-        detail = {
-          message = ["Automated cluster snapshot created"]
-        }
-        detail_type = ["RDS DB Cluster Snapshot Event"]
-      }
-      name = "rds-cluster-snapshot-created"
-    }
-  ]
-  description = "A list of CloudWatch Event Rules to trigger the Lambda function"
+variable "lambda_triggers" {
+  type = object({
+    automated_cluster_snapshot_created = bool
+    manual_cluster_snapshot_created    = bool
+    automated_snapshot_created         = bool
+    manual_snapshot_created            = bool
+  })
+  default = {
+    automated_cluster_snapshot_created = true
+    manual_cluster_snapshot_created    = false
+    automated_snapshot_created         = true
+    manual_snapshot_created            = false
+  }
+  description = "Specifies which RDS snapshot events will trigger the lambda function"
 }
 
 variable "s3_folder" {
