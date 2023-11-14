@@ -1,6 +1,29 @@
 locals {
   enabled    = module.this.enabled
   lambda_src = "${path.module}/lambda"
+
+  cloudwatch_event_patterns = {
+    automated_cluster_snapshot_created = {
+      name           = "automated-cluster-snapshot-created"
+      detail_message = "Automated cluster snapshot created"
+      detail_type    = "RDS DB Cluster Snapshot Event"
+    },
+    manual_cluster_snapshot_created = {
+      name           = "manual-cluster-snapshot-created"
+      detail_message = "Manual cluster snapshot created"
+      detail_type    = "RDS DB Cluster Snapshot Event"
+    },
+    automated_snapshot_created = {
+      name           = "automated-snapshot-created"
+      detail_message = "Automated snapshot created"
+      detail_type    = "RDS DB Snapshot Event"
+    },
+    manual_snapshot_created = {
+      name           = "manual-snapshot-created"
+      detail_message = "Manual snapshot created"
+      detail_type    = "RDS DB Snapshot Event"
+    }
+  }
 }
 
 resource "random_id" "build" {
@@ -108,18 +131,18 @@ module "lambda" {
 
   cloudwatch_logs_retention_in_days = var.lambda_log_retention
 
-  cloudwatch_event_rules = [for rule in var.cloudwatch_event_rules :
+  cloudwatch_event_rules = [for k, v in var.lambda_triggers :
     {
-      name = rule.name
+      name = local.cloudwatch_event_patterns[k]["name"]
       event_pattern = jsonencode(
         {
-          detail-type = rule.event_pattern.detail_type
+          detail-type = [local.cloudwatch_event_patterns[k]["detail_type"]]
           detail = {
-            Message = rule.event_pattern.detail.message
+            Message = [local.cloudwatch_event_patterns[k]["detail_message"]]
           }
         }
       )
-    }
+    } if v
   ]
 
   lambda_environment = {
