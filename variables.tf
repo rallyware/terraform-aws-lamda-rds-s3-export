@@ -1,6 +1,6 @@
 variable "lambda_runtime" {
   type        = string
-  default     = "python3.9"
+  default     = "python3.11"
   description = "The runtime environment for the Lambda function you are uploading"
 }
 
@@ -68,22 +68,18 @@ variable "s3_folder" {
   description = "The Amazon S3 bucket folder to use as path of the exported data"
 }
 
-variable "s3_lifecycle_configuration_rules" {
-  type = list(object({
-    enabled = bool
-    id      = string
-
-    abort_incomplete_multipart_upload_days = number
-
-    filter_and = any
-    expiration = any
-    transition = list(any)
-
-    noncurrent_version_expiration = any
-    noncurrent_version_transition = list(any)
-  }))
-  default     = []
-  description = "A list of lifecycle V2 rules"
+variable "s3_lifecycle_rules" {
+  type = object({
+    enabled                 = bool
+    expiration_days         = number
+    glacier_transition_days = number
+  })
+  default = {
+    enabled                 = true
+    expiration_days         = 1095
+    glacier_transition_days = 365
+  }
+  description = "A list of simplified lifecycle rules"
 }
 
 variable "key_deletion" {

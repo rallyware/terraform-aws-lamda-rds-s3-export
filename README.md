@@ -1,6 +1,4 @@
-# terraform-aws-lambda-rds-s3-export 
-
-This module deploys an AWS Lambda function that automates RDS snapshot export to S3.
+# terraform-aws-lambda-rds-s3-export
 
 <!-- BEGIN_TF_DOCS -->
 ## Usage
@@ -19,15 +17,15 @@ module "export" {
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3 |
 | <a name="requirement_archive"></a> [archive](#requirement\_archive) | >= 2 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 4 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 5 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | >= 3 |
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_archive"></a> [archive](#provider\_archive) | >= 2 |
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 4 |
-| <a name="provider_random"></a> [random](#provider\_random) | >= 3 |
+| <a name="provider_archive"></a> [archive](#provider\_archive) | 2.4.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.9.0 |
+| <a name="provider_random"></a> [random](#provider\_random) | 3.5.1 |
 ## Modules
 
 | Name | Source | Version |
@@ -70,7 +68,7 @@ module "export" {
 | <a name="input_lambda_memory"></a> [lambda\_memory](#input\_lambda\_memory) | Amount of memory in MB the Lambda Function can use at runtime | `number` | `128` | no |
 | <a name="input_lambda_policy_description"></a> [lambda\_policy\_description](#input\_lambda\_policy\_description) | The description of the IAM policy for the lambda role | `string` | `"IAM policy for role used by lambda that starts the export task"` | no |
 | <a name="input_lambda_role_description"></a> [lambda\_role\_description](#input\_lambda\_role\_description) | The description of the IAM role for the lambda function | `string` | `"IAM role used by lambda that starts the export task"` | no |
-| <a name="input_lambda_runtime"></a> [lambda\_runtime](#input\_lambda\_runtime) | The runtime environment for the Lambda function you are uploading | `string` | `"python3.9"` | no |
+| <a name="input_lambda_runtime"></a> [lambda\_runtime](#input\_lambda\_runtime) | The runtime environment for the Lambda function you are uploading | `string` | `"python3.11"` | no |
 | <a name="input_lambda_timeout"></a> [lambda\_timeout](#input\_lambda\_timeout) | The amount of time the Lambda Function has to run in seconds | `number` | `5` | no |
 | <a name="input_lambda_triggers"></a> [lambda\_triggers](#input\_lambda\_triggers) | Specifies which RDS snapshot events will trigger the lambda function | <pre>object({<br>    automated_cluster_snapshot_created = bool<br>    manual_cluster_snapshot_created    = bool<br>    automated_snapshot_created         = bool<br>    manual_snapshot_created            = bool<br>  })</pre> | <pre>{<br>  "automated_cluster_snapshot_created": true,<br>  "automated_snapshot_created": true,<br>  "manual_cluster_snapshot_created": false,<br>  "manual_snapshot_created": false<br>}</pre> | no |
 | <a name="input_name"></a> [name](#input\_name) | ID element. Usually the component or solution name, e.g. 'app' or 'jenkins'.<br>This is the only ID element not also included as a `tag`.<br>The "name" tag is set to the full `id` string. There is no tag with the value of the `name` input. | `string` | `null` | no |
@@ -79,7 +77,7 @@ module "export" {
 | <a name="input_role_description"></a> [role\_description](#input\_role\_description) | The description of the IAM role used by an export task | `string` | `"IAM role used by an export task"` | no |
 | <a name="input_role_policy_description"></a> [role\_policy\_description](#input\_role\_policy\_description) | The description of the IAM policy used by an export task | `string` | `"IAM policy for the role that is used by an export task"` | no |
 | <a name="input_s3_folder"></a> [s3\_folder](#input\_s3\_folder) | The Amazon S3 bucket folder to use as path of the exported data | `string` | `"instance"` | no |
-| <a name="input_s3_lifecycle_configuration_rules"></a> [s3\_lifecycle\_configuration\_rules](#input\_s3\_lifecycle\_configuration\_rules) | A list of lifecycle V2 rules | <pre>list(object({<br>    enabled = bool<br>    id      = string<br><br>    abort_incomplete_multipart_upload_days = number<br><br>    filter_and = any<br>    expiration = any<br>    transition = list(any)<br><br>    noncurrent_version_expiration = any<br>    noncurrent_version_transition = list(any)<br>  }))</pre> | `[]` | no |
+| <a name="input_s3_lifecycle_rules"></a> [s3\_lifecycle\_rules](#input\_s3\_lifecycle\_rules) | A list of simplified lifecycle rules | <pre>object({<br>    enabled                 = bool<br>    expiration_days         = number<br>    glacier_transition_days = number<br>  })</pre> | <pre>{<br>  "enabled": true,<br>  "expiration_days": 1095,<br>  "glacier_transition_days": 365<br>}</pre> | no |
 | <a name="input_stage"></a> [stage](#input\_stage) | ID element. Usually used to indicate role, e.g. 'prod', 'staging', 'source', 'build', 'test', 'deploy', 'release' | `string` | `null` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Additional tags (e.g. `{'BusinessUnit': 'XYZ'}`).<br>Neither the tag keys nor the tag values will be modified by this module. | `map(string)` | `{}` | no |
 | <a name="input_tenant"></a> [tenant](#input\_tenant) | ID element \_(Rarely used, not included by default)\_. A customer identifier, indicating who this instance of a resource is for | `string` | `null` | no |
