@@ -79,7 +79,7 @@ variable "s3_lifecycle_rules" {
     expiration_days         = 1095
     glacier_transition_days = 365
   }
-  description = "A list of simplified lifecycle rules"
+  description = "A simplified lifecycle rules"
 }
 
 variable "key_deletion" {
