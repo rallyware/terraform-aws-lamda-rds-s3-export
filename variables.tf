@@ -70,16 +70,18 @@ variable "s3_folder" {
 
 variable "s3_lifecycle_rules" {
   type = object({
-    enabled                 = bool
-    expiration_days         = number
-    glacier_transition_days = number
+    enabled                    = bool
+    expiration_days            = optional(number, 365)
+    glacier_transition_days    = optional(number, 0)
+    noncurrent_expiration_days = optional(number, 7)
   })
   default = {
-    enabled                 = true
-    expiration_days         = 1095
-    glacier_transition_days = 365
+    enabled                    = true
+    expiration_days            = 1095
+    glacier_transition_days    = 365
+    noncurrent_expiration_days = 7
   }
-  description = "A simplified lifecycle rules"
+  description = "A simplified S3 lifecycle rules"
 }
 
 variable "key_deletion" {
