@@ -15,7 +15,7 @@ module "bucket" {
 
     expiration = var.s3_lifecycle_rules.expiration_days > 0 ? {
       days = var.s3_lifecycle_rules.expiration_days
-    } : {}
+    } : null
 
     transition = var.s3_lifecycle_rules.glacier_transition_days > 0 ? [{
       days          = var.s3_lifecycle_rules.glacier_transition_days
