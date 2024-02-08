@@ -6,7 +6,7 @@ module "bucket" {
   kms_master_key_arn = module.kms_key.key_arn
 
   lifecycle_configuration_rules = flatten([
-    for rule in var.s3_lifecycle_rules : 
+    for rule in var.s3_lifecycle_rules :
     rule.enabled ? [{
       enabled = true
       id      = "rds-s3-export-expiration"

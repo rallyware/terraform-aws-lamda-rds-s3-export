@@ -74,7 +74,7 @@ variable "s3_lifecycle_rules" {
     expiration_days            = optional(number, 365)
     glacier_transition_days    = optional(number, 0)
     noncurrent_expiration_days = optional(number, 7)
-    versioning_enabled         = optional(bool,false)
+    versioning_enabled         = optional(bool, false)
   }))
   default = [{
     enabled                    = true
