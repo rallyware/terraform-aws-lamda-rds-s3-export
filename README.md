@@ -1,5 +1,7 @@
 # terraform-aws-lambda-rds-s3-export
 
+This module deploys an AWS Lambda function that automates RDS snapshot export to S3.
+
 <!-- BEGIN_TF_DOCS -->
 ## Usage
 ```hcl
