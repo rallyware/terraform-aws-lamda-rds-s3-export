@@ -70,20 +70,57 @@ variable "s3_folder" {
 
 variable "s3_lifecycle_rules" {
   type = list(object({
-    enabled                    = bool
-    expiration_days            = optional(number, 365)
-    glacier_transition_days    = optional(number, 0)
-    noncurrent_expiration_days = optional(number, 7)
-    versioning_enabled         = optional(bool, false)
+    enabled                                = optional(bool, true)
+    id                                     = optional(string)
+    abort_incomplete_multipart_upload_days = optional(number)
+
+    filter_and = optional(object({
+      object_size_greater_than = optional(number)
+      object_size_less_than    = optional(number)
+      prefix                   = optional(string)
+      tags                     = optional(map(string), {})
+    }))
+
+    expiration = optional(object({
+      date                         = optional(string)
+      days                         = optional(number)
+      expired_object_delete_marker = optional(bool)
+    }))
+
+    noncurrent_version_expiration = optional(object({
+      newer_noncurrent_versions = optional(number)
+      noncurrent_days           = optional(number)
+    }))
+
+    transition = optional(list(object({
+      date          = optional(string)
+      days          = optional(number)
+      storage_class = optional(string)
+    })))
+
+    noncurrent_version_transition = optional(list(object({
+      newer_noncurrent_versions = optional(number)
+      noncurrent_days           = optional(number)
+      storage_class             = optional(string)
+    })))
   }))
   default = [{
-    enabled                    = true
-    expiration_days            = 1095
-    glacier_transition_days    = 365
-    noncurrent_expiration_days = 7
-    versioning_enabled         = false
+    enabled                                = true
+    id                                     = "rds-s3-export-expiration"
+    abort_incomplete_multipart_upload_days = 3
+    expiration = {
+      days = 1095
+    }
+    noncurrent_version_expiration = {
+      noncurrent_days = 7
+    }
+    transition = [{
+      days          = 365
+      storage_class = "GLACIER"
+    }]
   }]
-  description = "A simplified list of S3 lifecycle rules"
+  description = "A simplified list of S3 lifecycle V2 rules"
+  nullable    = false
 }
 
 variable "key_deletion" {
