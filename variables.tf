@@ -109,13 +109,13 @@ variable "s3_lifecycle_rules" {
     id                                     = "rds-s3-export-expiration"
     abort_incomplete_multipart_upload_days = 3
     expiration = {
-      days = 1095
+      days = 180
     }
     noncurrent_version_expiration = {
       noncurrent_days = 7
     }
     transition = [{
-      days          = 365
+      days          = 60
       storage_class = "GLACIER"
     }]
   }]
