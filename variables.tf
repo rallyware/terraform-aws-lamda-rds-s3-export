@@ -84,7 +84,7 @@ variable "s3_lifecycle_rules" {
     expiration = optional(object({
       date                         = optional(string)
       days                         = optional(number)
-      expired_object_delete_marker = true
+      expired_object_delete_marker = optional(bool)
     }))
 
     noncurrent_version_expiration = optional(object({
@@ -110,6 +110,7 @@ variable "s3_lifecycle_rules" {
     abort_incomplete_multipart_upload_days = 3
     expiration = {
       days = 180
+      expired_object_delete_marker = true
     }
     noncurrent_version_expiration = {
       noncurrent_days = 7
