@@ -109,8 +109,8 @@ variable "s3_lifecycle_rules" {
     id                                     = "rds-s3-export-expiration"
     abort_incomplete_multipart_upload_days = 3
     expiration = {
-      days = 180
-      expired_object_delete_marker         = true
+      days                         = 180
+      expired_object_delete_marker = true
     }
     noncurrent_version_expiration = {
       noncurrent_days = 7
