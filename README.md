@@ -32,7 +32,7 @@ module "export" {
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_bucket"></a> [bucket](#module\_bucket) | cloudposse/s3-bucket/aws | 4.0.1 |
+| <a name="module_bucket"></a> [bucket](#module\_bucket) | cloudposse/s3-bucket/aws | 4.2.0 |
 | <a name="module_kms_key"></a> [kms\_key](#module\_kms\_key) | cloudposse/kms-key/aws | 0.12.1 |
 | <a name="module_lambda"></a> [lambda](#module\_lambda) | rallyware/lambda-function/aws | 0.3.0 |
 | <a name="module_role"></a> [role](#module\_role) | cloudposse/iam-role/aws | 0.19.0 |
