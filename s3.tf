@@ -1,8 +1,13 @@
 module "bucket" {
+
   source             = "cloudposse/s3-bucket/aws"
   version            = "4.0.1"
   sse_algorithm      = "aws:kms"
   kms_master_key_arn = module.kms_key.key_arn
+
+  source  = "cloudposse/s3-bucket/aws"
+  version = "4.2.0"
+  main
 
   lifecycle_configuration_rules = flatten([
     for rule in var.s3_lifecycle_rules :
