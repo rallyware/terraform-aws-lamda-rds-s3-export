@@ -82,8 +82,8 @@ variable "s3_lifecycle_rules" {
     }))
 
     expiration = optional(object({
-      date                         = optional(string)
-      days                         = optional(number)
+      date = optional(string)
+      days = optional(number)
     }))
 
     expired_object_delete_marker = optional(bool)
