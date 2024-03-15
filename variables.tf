@@ -105,22 +105,25 @@ variable "s3_lifecycle_rules" {
       storage_class             = optional(string)
     })))
   }))
-  default = [{
-    enabled                                = true
-    id                                     = "rds-s3-export-expiration"
-    abort_incomplete_multipart_upload_days = 3
-    expiration = {
-      days = 180
+  default = [
+    {
+      id = "rds-s3-export-rotation"
+      expiration = {
+        days = 180
+      }
+      transition = [
+        {
+          days          = 60
+          storage_class = "GLACIER"
+        }
+      ]
+    },
+    {
+      id                                     = "rds-s3-export-delete-expiration-markers"
+      expired_object_delete_marker           = true
+      abort_incomplete_multipart_upload_days = 3
     }
-    expired_object_delete_marker = true
-    noncurrent_version_expiration = {
-      noncurrent_days = 7
-    }
-    transition = [{
-      days          = 60
-      storage_class = "GLACIER"
-    }]
-  }]
+  ]
   description = "A simplified list of S3 lifecycle V2 rules"
   nullable    = false
 }
