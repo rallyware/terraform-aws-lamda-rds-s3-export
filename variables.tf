@@ -120,8 +120,10 @@ variable "s3_lifecycle_rules" {
       ]
     },
     {
-      id                                     = "rds-s3-export-delete-expiration-markers"
-      expired_object_delete_marker           = true
+      id = "rds-s3-export-delete-expiration-markers"
+      expiration = {
+        expired_object_delete_marker = true
+      }
       abort_incomplete_multipart_upload_days = 3
     }
   ]
