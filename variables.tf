@@ -1,6 +1,6 @@
 variable "lambda_runtime" {
   type        = string
-  default     = "python3.9"
+  default     = "python3.11"
   description = "The runtime environment for the Lambda function you are uploading"
 }
 
@@ -68,22 +68,67 @@ variable "s3_folder" {
   description = "The Amazon S3 bucket folder to use as path of the exported data"
 }
 
-variable "s3_lifecycle_configuration_rules" {
+variable "s3_lifecycle_rules" {
   type = list(object({
-    enabled = bool
+    enabled = optional(bool, true)
     id      = string
 
-    abort_incomplete_multipart_upload_days = number
+    abort_incomplete_multipart_upload_days = optional(number)
 
-    filter_and = any
-    expiration = any
-    transition = list(any)
+    # `filter_and` is the `and` configuration block inside the `filter` configuration.
+    # This is the only place you should specify a prefix.
+    filter_and = optional(object({
+      object_size_greater_than = optional(number) # integer >= 0
+      object_size_less_than    = optional(number) # integer >= 1
+      prefix                   = optional(string)
+      tags                     = optional(map(string), {})
+    }))
+    expiration = optional(object({
+      date                         = optional(string) # string, RFC3339 time format, GMT
+      days                         = optional(number) # integer > 0
+      expired_object_delete_marker = optional(bool)
+    }))
+    noncurrent_version_expiration = optional(object({
+      newer_noncurrent_versions = optional(number) # integer > 0
+      noncurrent_days           = optional(number) # integer >= 0
+    }))
+    transition = optional(list(object({
+      date          = optional(string) # string, RFC3339 time format, GMT
+      days          = optional(number) # integer > 0
+      storage_class = optional(string)
+      # string/enum, one of GLACIER, STANDARD_IA, ONEZONE_IA, INTELLIGENT_TIERING, DEEP_ARCHIVE, GLACIER_IR.
+    })), [])
 
-    noncurrent_version_expiration = any
-    noncurrent_version_transition = list(any)
+    noncurrent_version_transition = optional(list(object({
+      newer_noncurrent_versions = optional(number) # integer >= 0
+      noncurrent_days           = optional(number) # integer >= 0
+      storage_class             = optional(string)
+      # string/enum, one of GLACIER, STANDARD_IA, ONEZONE_IA, INTELLIGENT_TIERING, DEEP_ARCHIVE, GLACIER_IR.
+    })), [])
   }))
-  default     = []
-  description = "A list of lifecycle V2 rules"
+  default = [
+    {
+      id = "rds-s3-export-rotation"
+      expiration = {
+        days = 180
+      }
+      transition = [
+        {
+          days          = 60
+          storage_class = "GLACIER"
+        }
+      ]
+    },
+    {
+      id = "rds-s3-export-delete-expiration-markers"
+      expiration = {
+        expired_object_delete_marker = true
+      }
+      abort_incomplete_multipart_upload_days = 3
+    }
+  ]
+  description = "A simplified list of S3 lifecycle V2 rules"
+  nullable    = false
 }
 
 variable "key_deletion" {
