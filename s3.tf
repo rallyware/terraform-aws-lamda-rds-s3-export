@@ -1,6 +1,6 @@
 module "bucket" {
   source             = "cloudposse/s3-bucket/aws"
-  version            = "4.2.0"
+  version            = "4.3.0"
   sse_algorithm      = "aws:kms"
   kms_master_key_arn = module.kms_key.key_arn
 
