@@ -114,7 +114,7 @@ variable "s3_lifecycle_rules" {
       }
       transition = [
         {
-          days          = 60
+          days          = 180
           storage_class = "GLACIER"
         }
       ]
